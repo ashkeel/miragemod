@@ -7,7 +7,7 @@ require (
 	github.com/mattn/go-colorable v0.0.0-20170327083344-ded68f7a9561
 	github.com/nicklaw5/helix v1.25.0
 	github.com/sirupsen/logrus v1.8.1
-	github.com/strimertul/kilovolt-client-go/v2 v2.0.0
+	github.com/strimertul/kilovolt-client-go/v6 v6.0.0
 )
 
 require (
@@ -27,7 +27,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/orcaman/concurrent-map v0.0.0-20210501183033-44dafcb38ecc // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/strimertul/kilovolt/v4 v4.0.1 // indirect
+	github.com/strimertul/kilovolt/v6 v6.0.0 // indirect
 	go.opencensus.io v0.22.5 // indirect
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974 // indirect
 	golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f // indirect

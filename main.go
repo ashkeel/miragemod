@@ -13,13 +13,13 @@ import (
 	"github.com/mattn/go-colorable"
 	"github.com/nicklaw5/helix"
 	"github.com/sirupsen/logrus"
-
-	kvclient "github.com/strimertul/kilovolt-client-go/v2"
+	kvclient "github.com/strimertul/kilovolt-client-go/v6"
 )
 
-func check(err error) {
+func check(err error, format string, args ...interface{}) {
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Fatal error: %s\n", err.Error())
+		args = append(args, err)
+		_, _ = fmt.Fprintf(os.Stderr, format+": %s\n", args...)
 		os.Exit(1)
 	}
 }
@@ -42,6 +42,8 @@ func main() {
 	auth := flag.String("auth", "", "Optional Authorization string")
 	prefix := flag.String("prefix", "mirage/", "Prefix/Namespace for keys")
 	rewardID := flag.String("reward", "a715bd7d-9454-4ff4-b91f-f74ffc97d63f", "Reward ID to check for")
+	password := flag.String("password", "", "Optional password for Kilovolt")
+	flag.Parse()
 
 	log := logrus.New()
 	_ = prefix
@@ -57,18 +59,18 @@ func main() {
 		headers.Add("Authorization", "Bearer "+*auth)
 	}
 
-	client, err := kvclient.NewClient(*endpoint, kvclient.ClientOptions{Headers: headers})
-	check(err)
+	client, err := kvclient.NewClient(*endpoint, kvclient.ClientOptions{Headers: headers, Password: *password})
+	check(err, "Connection to kilovolt failed")
 
 	log.WithField("endpoint", *endpoint).Info("Connected to Kilovolt")
 
 	// Get chat messages
 	chat, err := client.SubscribeKey("twitch/ev/chat-message")
-	check(err)
+	check(err, "Could not subscribe to chat messages")
 
 	// Get redeems
 	webhook, err := client.SubscribeKey("stulbe/ev/webhook")
-	check(err)
+	check(err, "Could not subscribe to webhooks")
 
 	// Get figment counts
 	path := fmt.Sprintf("%sfigments", *prefix)
@@ -80,7 +82,7 @@ func main() {
 			log.Info("No figment map found, creating new one")
 			_ = client.SetJSON(path, &figmentCounts)
 		} else {
-			check(err)
+			check(err, "Could not get/decode figment map")
 		}
 	}
 
